@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Serokell <https://serokell.io>
 # SPDX-License-Identifier: CC0-1.0
 
-/.stack-work
-/dist-newstyle
-/cabal.project.local
+resolver: lts-20.4
+packages: ['.']
