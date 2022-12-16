@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2022 Serokell <https://serokell.io>
+# SPDX-License-Identifier: CC0-1.0
+
+verification:
+  ignoreRefs:
+    # Ignore localhost links by default
+    - ^(https?|ftps?)://(localhost|127\.0\.0\.1).*
+    - https://opensource.org/licenses/MPL-2.0 # Returns error 503 on CI, but works in browser
+
+# Parameters of scanners for various file types.
+scanners:
+  markdown:
+    # Flavor of markdown, e.g. GitHub-flavor.
+    #
+    # This affects which anchors are generated for headers.
+    flavor: GitHub

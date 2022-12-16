@@ -1,0 +1,203 @@
+# SPDX-FileCopyrightText: 2020 Kowainik
+# SPDX-FileCopyrightText: 2022 Serokell <https://serokell.io/>
+#
+# SPDX-License-Identifier: MPL-2.0
+
+# Sources:
+# • https://github.com/kowainik/validation-selective/blob/5b46cd4810bbaa09b704062ebbfa2bb47137425d/.github/workflows/ci.yml
+# • https://kodimensional.dev/github-actions
+# • https://github.com/serokell/tztime/blob/main/.github/workflows/ci.yml
+
+name: CI
+
+# Trigger the workflow on push or pull request
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+
+jobs:
+  xrefcheck:
+    name: Verify cross references
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: serokell/xrefcheck-action@v1
+      with:
+        xrefcheck-version: '0.2.2'
+
+  reuse:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: REUSE Compliance Check
+      uses: fsfe/reuse-action@v1
+
+  hlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: haskell/actions/hlint-setup@v2
+        with:
+          version: '3.5'
+      - uses: haskell/actions/hlint-run@v2
+        with:
+          path: '["src/", "test/"]'
+          fail-on: warning
+
+  stylish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache binaries
+        id: cache-stylish
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/bin
+          key: bin-stylish
+      - name: Setup
+        if: steps.cache-stylish.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          wget https://github.com/haskell/stylish-haskell/releases/download/v0.14.3.0/stylish-haskell-v0.14.3.0-linux-x86_64.tar.gz
+          tar -zxf stylish-haskell-v0.14.3.0-linux-x86_64.tar.gz \
+            --strip-components 1 \
+            -C "$HOME/.local/bin" \
+            stylish-haskell-v0.14.3.0-linux-x86_64/stylish-haskell
+          chmod +x "$HOME/.local/bin"/stylish-haskell
+      - name: Stylish Haskell
+        run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          ./scripts/validate-stylish.sh
+
+  whitespace:
+    name: Find Trailing Whitespace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: harupy/find-trailing-whitespace@v1.0
+
+  cabal:
+    name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        cabal: ["3.6"]
+        # If you update this list of supported compiler versions,
+        # make sure to update the `tested-with` section of `package.yaml`.
+        ghc:
+          - "9.0.2"
+          - "9.2.4" # should be 9.2.5, but haskell setup doesn't support it :(
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - uses: haskell/actions/setup@v2
+      id: setup-haskell-cabal
+      name: Setup Haskell
+      with:
+        ghc-version: ${{ matrix.ghc }}
+        cabal-version: ${{ matrix.cabal }}
+
+    - uses: actions/cache@v3
+      name: Cache cabal-store
+      with:
+        path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
+        key: ${{ runner.os }}-${{ matrix.ghc }}-cabal
+
+    - name: Configure
+      shell: bash
+      run: |
+        cat > cabal.project <<EOF
+        packages:
+          ./
+        package hsblst
+          ghc-options: -Werror
+        EOF
+
+    - name: Build
+      run: |
+        cabal update
+        cabal build --enable-tests --enable-benchmarks --write-ghc-environment-files=always
+
+    - name: Test
+      run: |
+        cabal test all --enable-tests
+
+    - name: Haddock
+      # Run haddock for all components
+      run: |
+        cabal haddock --haddock-all
+
+    - name: Install
+      # Check the package actually builds from sdist
+      run: |
+        cabal install --lib
+
+  stack:
+    name: stack / ghc ${{ matrix.ghc }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stack: ["2.9.1"]
+        ghc: ["9.2.4"] # this should be 9.2.5, but haskell/actions/setup doesn't support it :(
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - uses: haskell/actions/setup@v2
+      name: Setup Haskell Stack
+      with:
+        ghc-version: ${{ matrix.ghc }}
+        stack-version: ${{ matrix.stack }}
+
+    - uses: actions/cache@v3
+      name: Cache ~/.stack
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-${{ matrix.ghc }}-stack
+
+    - name: Set stack config
+      run: |
+        stack config set system-ghc --global true
+        stack config set install-ghc --global false
+        # for weeder
+        echo 'ghc-options: {"$locals": -ddump-to-file -ddump-hi}' >> stack.yaml
+
+    - name: Build
+      run: |
+        stack build \
+          --test --bench --no-run-tests --no-run-benchmarks \
+          --ghc-options '-Werror' \
+          --haddock --no-haddock-deps
+
+    - name: Test
+      run: |
+        stack test
+
+    - name: Weeder
+      run: |
+        wget https://github.com/ndmitchell/weeder/releases/download/v1.0.9/weeder-1.0.9-x86_64-linux.tar.gz
+        tar zxf weeder-1.0.9-x86_64-linux.tar.gz
+        weeder-1.0.9/weeder stack.yaml
+
+  validate-cabal-files:
+    name: Validate cabal files
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+    - name: Validate cabal files
+      run: |
+        wget https://github.com/lierdakil/stack2cabal-static-build/releases/download/v-s2c-1.0.13-hp-0.34.4/stack2cabal
+        chmod +x stack2cabal
+        mkdir -p ~/.local/bin
+        mv stack2cabal ~/.local/bin
+        ./scripts/validate-cabal-files.sh

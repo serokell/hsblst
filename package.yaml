@@ -1,5 +1,4 @@
-# SPDX-FileCopyrightText: 2020 Serokell <https://serokell.io>
-#
+# SPDX-FileCopyrightText: 2022 Serokell <https://serokell.io>
 # SPDX-License-Identifier: CC0-1.0
 
 name: hsblst
@@ -20,7 +19,9 @@ license: MPL-2.0
 
 maintainer:
 - Nikolay "Lierdakil" Yakimov <nikolay.yakimov@serokell.io>
-# tested-with: GHC == 8.6.5, GHC == 8.8.3, GHC = 8.10.1
+tested-with:
+  - GHC == 9.0.2
+  - GHC == 9.2.4
 
 default-extensions:
   - AllowAmbiguousTypes
@@ -42,6 +43,7 @@ default-extensions:
   - FlexibleInstances
   - GADTs
   - GeneralizedNewtypeDeriving
+  - ImportQualifiedPost
   - LambdaCase
   - MultiParamTypeClasses
   - MultiWayIf
@@ -59,6 +61,7 @@ default-extensions:
   - RecursiveDo
   - ScopedTypeVariables
   - StandaloneDeriving
+  - StandaloneKindSignatures
   - StrictData
   - TemplateHaskell
   - TupleSections
@@ -80,22 +83,38 @@ ghc-options:
   - -Wno-missing-local-signatures
   - -Wno-monomorphism-restriction
   - -Wno-implicit-prelude
+  - -Wno-prepositive-qualified-module
+  - -Wno-inferred-safe-imports
+  - -Wno-missing-safe-haskell-mode
 
 when:
-  - condition: impl(ghc >= 8.10.0)
+  - condition: impl(ghc >= 9.2)
     ghc-options:
-      - -Wno-prepositive-qualified-module
-      - -Wno-inferred-safe-imports
-      - -Wno-missing-safe-haskell-mode
+      - -Wno-missing-kind-signatures
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+- c-source/build/**/*.s
+- c-source/build/**/*.S
+- c-source/src/**/*.c
+- c-source/src/**/*.h
+- c-source/bindings/*.h
 
 dependencies:
   - base
+  - memory
 
 library:
   source-dirs: src
+  include-dirs: c-source/bindings
+  build-tools: c2hs:c2hs
+  c-sources:
+    - c-source/src/server.c
+    - c-source/build/assembly.S
 
 tests:
-  blst-hs-test:
+  hsblst-test:
     main:        Main.hs
     source-dirs: test
     build-tools: tasty-discover:tasty-discover
@@ -107,4 +126,9 @@ tests:
     - '"-with-rtsopts=-N -A64m -AL256m"'
 
     dependencies:
+    - hsblst
+    - bytestring
+    - hex-text
     - tasty
+    - tasty-hunit
+    - text

@@ -1,6 +1,5 @@
 <!--
-   - SPDX-FileCopyrightText: 2019-2021 Serokell <https://serokell.io>
-   -
+   - SPDX-FileCopyrightText: 2022 Serokell <https://serokell.io>
    - SPDX-License-Identifier: MPL-2.0
    -->
 # HsBLST
@@ -9,19 +8,19 @@
 
 HsBLST is low-level Haskell bindings and a high-level interface to [BLST](https://github.com/supranational/blst) -- a multilingual BLS12-381 signature library.
 
-## Build Instructions [↑](#-patak)
+## Build Instructions [↑](#hsblst)
 
 Run `make` to build everything.
 
-## Usage [↑](#-patak)
+## Usage [↑](#hsblst)
 
 See Haddock documentation.
 
-## For Contributors [↑](#-patak)
+## For Contributors [↑](#hsblst)
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
-## About Serokell [↑](#-patak)
+## About Serokell [↑](#hsblst)
 
 Patak is maintained and funded with ❤️ by [Serokell](https://serokell.io/).
 The names and logo for Serokell are trademark of Serokell OÜ.
