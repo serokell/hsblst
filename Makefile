@@ -32,3 +32,5 @@ all:
 	$(MAKEU) PACKAGE=""
 test-all:
 	$(MAKEU) test PACKAGE=""
+stylish:
+	find src/ test/ -name '*.hs' -exec stylish-haskell -i '{}' \;
