@@ -16,17 +16,21 @@ import Data.ByteArray (Bytes)
 import Data.ByteArray qualified as BA
 import Data.ByteArray.Sized (SizedByteArray)
 import Data.ByteArray.Sized qualified as AS
-import Data.Maybe (fromJust)
-import Data.Text (Text)
-import GHC.TypeNats (KnownNat)
+import Data.Maybe (fromJust, fromMaybe)
+import Data.Proxy (Proxy(..))
+import Data.Text (Text, unpack)
+import GHC.TypeNats (KnownNat, natVal)
 import System.IO.Unsafe (unsafePerformIO)
 import Text.Hex (decodeHex, encodeHex)
 
 import Crypto.BLST.Internal.Bindings qualified as B
 import Crypto.BLST.Internal.Classy qualified as C
 
-fromHex :: (KnownNat n) => Text -> SizedByteArray n Bytes
-fromHex = AS.convert . AS.unsafeSizedByteArray . fromJust . decodeHex
+fromHex :: forall n. (KnownNat n) => Text -> SizedByteArray n Bytes
+fromHex arg = AS.convert
+  . fromMaybe (error $ "Expected " <> show (natVal @n Proxy) <> " bytes got " <> unpack arg)
+  . AS.sizedByteArray . fromJust . decodeHex
+  $ arg
 
 fromHex' :: BA.ByteArray a => Text -> a
 fromHex' = BA.convert . fromJust . decodeHex
