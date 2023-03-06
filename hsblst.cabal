@@ -205,6 +205,7 @@ library
       c2hs
   build-depends:
       base
+    , deepseq
     , memory
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures

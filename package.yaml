@@ -109,6 +109,8 @@ library:
   source-dirs: src
   include-dirs: c-source/bindings
   build-tools: c2hs:c2hs
+  dependencies:
+    - deepseq
   c-sources:
     - c-source/src/server.c
     - c-source/build/assembly.S

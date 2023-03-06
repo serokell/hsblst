@@ -10,10 +10,12 @@ module Crypto.BLST.Internal.Bindings.Types
 
 import Prelude hiding (length)
 
+import Control.DeepSeq (NFData(..))
+import Data.ByteArray (Bytes, ScrubbedBytes)
+import Data.ByteArray.Sized (SizedByteArray(..))
+import Data.Coerce (coerce)
 import Data.Kind (Type)
 import GHC.TypeNats (Nat)
-import Data.ByteArray (Bytes, ScrubbedBytes)
-import Data.ByteArray.Sized (SizedByteArray)
 
 import Crypto.BLST.Internal.Demote
 
@@ -31,16 +33,26 @@ type family SizeOf t
 newtype Point (a :: PointKind) = Point ( SizedByteArray (SizeOf (Point a)) Bytes )
   deriving stock (Show, Eq)
 
+instance NFData (Point a) where
+  rnf = rnf @Bytes . unSizedByteArray . coerce
+
 -- | Affine point representation.
 newtype Affine (a :: PointKind) = Affine { unAffine :: SizedByteArray (SizeOf (Affine a)) Bytes }
   deriving stock (Show, Eq)
+
+instance NFData (Affine a) where
+  rnf = rnf @Bytes . unSizedByteArray . coerce
 
 -- | Scalar value representation.
 newtype Scalar = Scalar ( SizedByteArray (SizeOf Scalar) ScrubbedBytes )
   deriving stock (Show, Eq)
 
+instance NFData Scalar where
+  rnf = rnf @ScrubbedBytes . unSizedByteArray . coerce
+
 -- | Pairing context.
 newtype PairingCtx = PairingCtx Bytes
+  deriving newtype NFData
 
 -- | Flag to choose whether values are hashed or encoded to the curve.
 data EncodeMethod = Encode | Hash
