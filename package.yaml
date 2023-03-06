@@ -100,6 +100,8 @@ extra-source-files:
 - c-source/src/**/*.c
 - c-source/src/**/*.h
 - c-source/bindings/*.h
+- c-source/LICENSE
+- c-source/README.md
 
 dependencies:
   - base
