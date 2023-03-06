@@ -100,6 +100,8 @@ extra-source-files:
 - c-source/src/**/*.c
 - c-source/src/**/*.h
 - c-source/bindings/*.h
+- c-source/LICENSE
+- c-source/README.md
 
 dependencies:
   - base
@@ -109,6 +111,8 @@ library:
   source-dirs: src
   include-dirs: c-source/bindings
   build-tools: c2hs:c2hs
+  dependencies:
+    - deepseq
   c-sources:
     - c-source/src/server.c
     - c-source/build/assembly.S

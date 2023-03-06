@@ -32,6 +32,9 @@ module Crypto.BLST
   , noDST
   , aggregateSignatures
   , aggregateVerify
+  , ByteSize
+  , SerializeOrCompress(..)
+  , byteSize
   ) where
 
 import Control.Exception (catch, throwIO)
