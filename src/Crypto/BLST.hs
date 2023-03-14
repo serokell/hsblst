@@ -5,11 +5,8 @@
 {-# OPTIONS_GHC -Wno-redundant-constraints #-}
 
 module Crypto.BLST
-  ( IsCurve
-  , IsPoint
-  , ToCurve
-  , Demote
-  , keygen
+  ( -- * Main functions
+    keygen
   , skToPk
   , sign
   , verify
@@ -23,17 +20,33 @@ module Crypto.BLST
   , deserializeSignature
   , compressSignature
   , decompressSignature
+
+    -- * Aggregate signatures
+  , aggregateSignatures
+  , aggregateVerify
+
+    -- * Representation datatypes
   , SecretKey
   , PublicKey
   , Signature
   , B.BlstError(..)
+
+    -- * Utility typeclasses
+  , IsCurve
+  , IsPoint
+  , ToCurve
+  , Demote
+
+    -- * Data kinds
   , Curve(..)
   , B.EncodeMethod(..)
-  , noDST
-  , aggregateSignatures
-  , aggregateVerify
+
+    -- * Typelevel byte sizes
   , ByteSize
   , SerializeOrCompress(..)
+
+    -- * Misc helpers
+  , noDST
   , byteSize
   ) where
 

@@ -3,7 +3,7 @@
 
 {-# OPTIONS_HADDOCK not-home #-}
 
--- | Lower-level bindings
+-- | Types for lower-level bindings
 module Crypto.BLST.Internal.Bindings.Types
   ( module Crypto.BLST.Internal.Bindings.Types
   ) where
