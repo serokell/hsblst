@@ -81,16 +81,12 @@ jobs:
   cabal:
     name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
     runs-on: ${{ matrix.os }}
+    needs: collect-ghc-versions
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
         cabal: ["3.6"]
-        # If you update this list of supported compiler versions,
-        # make sure to update the `tested-with` section of `package.yaml`.
-        ghc:
-          - "9.0.2"
-          - "9.2.7"
-          - "9.4.4"
+        ghc: ${{ fromJSON(needs.collect-ghc-versions.outputs.ghcvers) }}
 
     steps:
     - uses: actions/checkout@v2
@@ -139,12 +135,25 @@ jobs:
       run: |
         cabal install --lib
 
+  collect-ghc-versions:
+    name: Extract GHC versions from tested-with package.yaml field.
+    runs-on: ubuntu-latest
+    outputs:
+      ghcvers: ${{ steps.ghcvers.outputs.ghcvers }}
+    steps:
+    - uses: actions/checkout@v3
+    - id: ghcvers
+      run: |
+        echo -n "ghcvers=" >> "$GITHUB_OUTPUT"
+        yq -I0 '."tested-with" | map(sub("^GHC *== *";""))' package.yaml -o json >> "$GITHUB_OUTPUT"
+
   stack:
     name: stack / ${{ matrix.resolver }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         stack: ["2.9.3"]
+        # Remember to update the `tested-with` section of `package.yaml`.
         resolver: ["lts-19.3", "lts", "nightly"]
 
     steps:
@@ -154,13 +163,14 @@ jobs:
         GHCVER=$(curl -L https://www.stackage.org/${{ matrix.resolver }}/ghc-major-version)
         echo "ghcver=$GHCVER" >> "$GITHUB_OUTPUT"
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
 
     - name: Check tested-with contains current GHC version
       run: |
-        yq -e '."tested-with" | contains(["GHC == " + ${{ steps.ghcver.outputs.ghcver }}])' package.yaml
+        export GHCVER=${{ steps.ghcver.outputs.ghcver }}
+        yq -e '."tested-with" | contains(["GHC == " + strenv(GHCVER)])' package.yaml
 
     - uses: haskell/actions/setup@v2
       name: Setup Haskell Stack
