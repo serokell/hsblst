@@ -89,7 +89,8 @@ jobs:
         # make sure to update the `tested-with` section of `package.yaml`.
         ghc:
           - "9.0.2"
-          - "9.2.5"
+          - "9.2.7"
+          - "9.4.4"
 
     steps:
     - uses: actions/checkout@v2
@@ -139,34 +140,40 @@ jobs:
         cabal install --lib
 
   stack:
-    name: stack / ${{ matrix.resolver }} / ghc ${{ matrix.ghc }}
+    name: stack / ${{ matrix.resolver }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         stack: ["2.9.3"]
-        ghc: ["9.0.2", "9.2.5"]
-        include:
-        - ghc: "9.0.2"
-          resolver: "lts-19.3"
-        - ghc: "9.2.5"
-          resolver: "lts-20.4"
+        resolver: ["lts-19.3", "lts", "nightly"]
 
     steps:
+    - name: Get compiler version
+      id: ghcver
+      run: |
+        GHCVER=$(curl -L https://www.stackage.org/${{ matrix.resolver }}/ghc-major-version)
+        echo "ghcver=$GHCVER" >> "$GITHUB_OUTPUT"
+
     - uses: actions/checkout@v2
       with:
         submodules: 'true'
 
+    - name: Check tested-with contains current GHC version
+      run: |
+        yq -e '."tested-with" | contains(["GHC == " + ${{ steps.ghcver.outputs.ghcver }}])' package.yaml
+
     - uses: haskell/actions/setup@v2
       name: Setup Haskell Stack
+      id: setup-haskell
       with:
-        ghc-version: ${{ matrix.ghc }}
+        ghc-version: ${{ steps.ghcver.outputs.ghcver }}
         stack-version: ${{ matrix.stack }}
 
     - uses: actions/cache@v3
       name: Cache ~/.stack
       with:
         path: ~/.stack
-        key: ${{ runner.os }}-${{ matrix.ghc }}-stack
+        key: ${{ runner.os }}-${{ steps.ghcver.outputs.ghcver }}-stack
 
     - name: Set stack config
       run: |
@@ -176,14 +183,14 @@ jobs:
         # for weeder
         echo 'ghc-options: {"$locals": -ddump-to-file -ddump-hi}' >> stack.yaml
 
-    - name: Build
+    - name: Stack build
       run: |
         stack build \
           --test --bench --no-run-tests --no-run-benchmarks \
           --ghc-options '-Werror' \
           --haddock --no-haddock-deps
 
-    - name: Test
+    - name: Stack test
       run: |
         stack test
 
@@ -200,10 +207,17 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: 'true'
-    - name: Validate cabal files
+
+    - name: Get hpack
       run: |
-        wget https://github.com/lierdakil/stack2cabal-static-build/releases/download/v-s2c-1.0.13-hp-0.34.4/stack2cabal
-        chmod +x stack2cabal
-        mkdir -p ~/.local/bin
-        mv stack2cabal ~/.local/bin
-        ./scripts/validate-cabal-files.sh
+        wget https://github.com/lierdakil/hpack-static/releases/download/v0.34.4/hpack.gz
+        gunzip hpack.gz
+        chmod +x hpack
+
+    - name: Generate cabalfile
+      run: ./hpack -f
+
+    - run: git diff hsblst.cabal
+
+    - name: Fail if .cabal file was changed
+      run: git diff-files --quiet hsblst.cabal || exit 1
