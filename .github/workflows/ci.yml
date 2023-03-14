@@ -22,7 +22,7 @@ jobs:
     name: Verify cross references
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: serokell/xrefcheck-action@v1
       with:
         xrefcheck-version: '0.2.2'
@@ -30,14 +30,14 @@ jobs:
   reuse:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: REUSE Compliance Check
       uses: fsfe/reuse-action@v1
 
   hlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: haskell/actions/hlint-setup@v2
         with:
           version: '3.5'
@@ -49,7 +49,7 @@ jobs:
   stylish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache binaries
         id: cache-stylish
         uses: actions/cache@v3
@@ -75,7 +75,7 @@ jobs:
     name: Find Trailing Whitespace
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: harupy/find-trailing-whitespace@v1.0
 
   cabal:
@@ -89,7 +89,7 @@ jobs:
         ghc: ${{ fromJSON(needs.collect-ghc-versions.outputs.ghcvers) }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
 
@@ -214,7 +214,7 @@ jobs:
     name: Validate cabal files
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
 
