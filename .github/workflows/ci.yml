@@ -139,12 +139,17 @@ jobs:
         cabal install --lib
 
   stack:
-    name: stack / ghc ${{ matrix.ghc }}
+    name: stack / ${{ matrix.resolver }} / ghc ${{ matrix.ghc }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stack: ["2.9.1"]
-        ghc: ["9.2.5"]
+        stack: ["2.9.3"]
+        ghc: ["9.0.2", "9.2.5"]
+        include:
+        - ghc: "9.0.2"
+          resolver: "lts-19.3"
+        - ghc: "9.2.5"
+          resolver: "lts-20.4"
 
     steps:
     - uses: actions/checkout@v2
@@ -167,6 +172,7 @@ jobs:
       run: |
         stack config set system-ghc --global true
         stack config set install-ghc --global false
+        stack config set resolver ${{ matrix.resolver }}
         # for weeder
         echo 'ghc-options: {"$locals": -ddump-to-file -ddump-hi}' >> stack.yaml
 
