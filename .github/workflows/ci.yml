@@ -16,9 +16,12 @@ on:
   push:
     branches:
     - master
+  schedule:
+    - cron: '5 4 * * 6'
 
 jobs:
   xrefcheck:
+    if: ${{ github.event_name != 'schedule' }}
     name: Verify cross references
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +31,7 @@ jobs:
         xrefcheck-version: '0.2.2'
 
   reuse:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -35,6 +39,7 @@ jobs:
       uses: fsfe/reuse-action@v1
 
   hlint:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -47,6 +52,7 @@ jobs:
           fail-on: warning
 
   stylish:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -72,6 +78,7 @@ jobs:
           ./scripts/validate-stylish.sh
 
   whitespace:
+    if: ${{ github.event_name != 'schedule' }}
     name: Find Trailing Whitespace
     runs-on: ubuntu-latest
     steps:
@@ -79,6 +86,7 @@ jobs:
       - uses: harupy/find-trailing-whitespace@v1.0
 
   cabal:
+    if: ${{ github.event_name != 'schedule' }}
     name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
     runs-on: ${{ matrix.os }}
     needs: collect-ghc-versions
@@ -136,6 +144,7 @@ jobs:
         cabal install --lib
 
   collect-ghc-versions:
+    if: ${{ github.event_name != 'schedule' }}
     name: Extract GHC versions from tested-with package.yaml field.
     runs-on: ubuntu-latest
     outputs:
@@ -211,6 +220,7 @@ jobs:
         weeder-1.0.9/weeder stack.yaml
 
   validate-cabal-files:
+    if: ${{ github.event_name != 'schedule' }}
     name: Validate cabal files
     runs-on: ubuntu-latest
     steps:
