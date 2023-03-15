@@ -219,6 +219,14 @@ jobs:
         tar zxf weeder-1.0.9-x86_64-linux.tar.gz
         weeder-1.0.9/weeder stack.yaml
 
+    - name: Notify on scheduled failures
+      if: ${{ failure() && github.event_name == 'schedule' }}
+      run: |
+        curl -XPOST https://slack.com/api/chat.postMessage \
+          -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+          -d "channel=libraries" \
+          -d "text=Scheduled job failed on hsblst with resolver ${{ matrix.resolver }} ghc ${{ steps.ghcver.outputs.ghcver }}"
+
   validate-cabal-files:
     if: ${{ github.event_name != 'schedule' }}
     name: Validate cabal files
