@@ -110,7 +110,6 @@ extra-source-files:
     c-source/src/map_to_g2.c
     c-source/src/multi_scalar.c
     c-source/src/pairing.c
-    c-source/src/pentaroot.c
     c-source/src/rb_tree.c
     c-source/src/recip.c
     c-source/src/server.c
@@ -123,7 +122,6 @@ extra-source-files:
     c-source/src/errors.h
     c-source/src/fields.h
     c-source/src/no_asm.h
-    c-source/src/pentaroot-addchain.h
     c-source/src/point.h
     c-source/src/recip-addchain.h
     c-source/src/sha256.h
