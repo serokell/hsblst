@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 name: hsblst
-version: 0
+version: 0.0.1
 author: Serokell <hi@serokell.io>
 github: serokell/hsblst
 
