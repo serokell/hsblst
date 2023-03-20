@@ -16,28 +16,33 @@ on:
   push:
     branches:
     - master
+  schedule:
+    - cron: '5 4 * * 6'
 
 jobs:
   xrefcheck:
+    if: ${{ github.event_name != 'schedule' }}
     name: Verify cross references
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: serokell/xrefcheck-action@v1
       with:
         xrefcheck-version: '0.2.2'
 
   reuse:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: REUSE Compliance Check
       uses: fsfe/reuse-action@v1
 
   hlint:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: haskell/actions/hlint-setup@v2
         with:
           version: '3.5'
@@ -47,9 +52,10 @@ jobs:
           fail-on: warning
 
   stylish:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache binaries
         id: cache-stylish
         uses: actions/cache@v3
@@ -72,27 +78,26 @@ jobs:
           ./scripts/validate-stylish.sh
 
   whitespace:
+    if: ${{ github.event_name != 'schedule' }}
     name: Find Trailing Whitespace
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: harupy/find-trailing-whitespace@v1.0
 
   cabal:
+    if: ${{ github.event_name != 'schedule' }}
     name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
     runs-on: ${{ matrix.os }}
+    needs: collect-ghc-versions
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
         cabal: ["3.6"]
-        # If you update this list of supported compiler versions,
-        # make sure to update the `tested-with` section of `package.yaml`.
-        ghc:
-          - "9.0.2"
-          - "9.2.5"
+        ghc: ${{ fromJSON(needs.collect-ghc-versions.outputs.ghcvers) }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
 
@@ -138,35 +143,56 @@ jobs:
       run: |
         cabal install --lib
 
+  collect-ghc-versions:
+    if: ${{ github.event_name != 'schedule' }}
+    name: Extract GHC versions from tested-with package.yaml field.
+    runs-on: ubuntu-latest
+    outputs:
+      ghcvers: ${{ steps.ghcvers.outputs.ghcvers }}
+    steps:
+    - uses: actions/checkout@v3
+    - id: ghcvers
+      run: |
+        echo -n "ghcvers=" >> "$GITHUB_OUTPUT"
+        yq -I0 '."tested-with" | map(sub("^GHC *== *";""))' package.yaml -o json >> "$GITHUB_OUTPUT"
+
   stack:
-    name: stack / ${{ matrix.resolver }} / ghc ${{ matrix.ghc }}
+    name: stack / ${{ matrix.resolver }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         stack: ["2.9.3"]
-        ghc: ["9.0.2", "9.2.5"]
-        include:
-        - ghc: "9.0.2"
-          resolver: "lts-19.3"
-        - ghc: "9.2.5"
-          resolver: "lts-20.4"
+        # Remember to update the `tested-with` section of `package.yaml`.
+        resolver: ["lts-19.3", "lts", "nightly"]
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Get compiler version
+      id: ghcver
+      run: |
+        GHCVER=$(curl -L https://www.stackage.org/${{ matrix.resolver }}/ghc-major-version)
+        echo "ghcver=$GHCVER" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
 
+    - name: Check tested-with contains current GHC version
+      run: |
+        export GHCVER=${{ steps.ghcver.outputs.ghcver }}
+        yq -e '."tested-with" | contains(["GHC == " + strenv(GHCVER)])' package.yaml
+
     - uses: haskell/actions/setup@v2
       name: Setup Haskell Stack
+      id: setup-haskell
       with:
-        ghc-version: ${{ matrix.ghc }}
+        ghc-version: ${{ steps.ghcver.outputs.ghcver }}
         stack-version: ${{ matrix.stack }}
 
     - uses: actions/cache@v3
       name: Cache ~/.stack
       with:
         path: ~/.stack
-        key: ${{ runner.os }}-${{ matrix.ghc }}-stack
+        key: ${{ runner.os }}-${{ steps.ghcver.outputs.ghcver }}-stack
 
     - name: Set stack config
       run: |
@@ -176,14 +202,14 @@ jobs:
         # for weeder
         echo 'ghc-options: {"$locals": -ddump-to-file -ddump-hi}' >> stack.yaml
 
-    - name: Build
+    - name: Stack build
       run: |
         stack build \
           --test --bench --no-run-tests --no-run-benchmarks \
           --ghc-options '-Werror' \
           --haddock --no-haddock-deps
 
-    - name: Test
+    - name: Stack test
       run: |
         stack test
 
@@ -193,17 +219,33 @@ jobs:
         tar zxf weeder-1.0.9-x86_64-linux.tar.gz
         weeder-1.0.9/weeder stack.yaml
 
+    - name: Notify on scheduled failures
+      if: ${{ failure() && github.event_name == 'schedule' }}
+      run: |
+        curl -XPOST https://slack.com/api/chat.postMessage \
+          -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+          -d "channel=libraries" \
+          -d "text=Scheduled job failed on hsblst with resolver ${{ matrix.resolver }} ghc ${{ steps.ghcver.outputs.ghcver }}"
+
   validate-cabal-files:
+    if: ${{ github.event_name != 'schedule' }}
     name: Validate cabal files
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
-    - name: Validate cabal files
+
+    - name: Get hpack
       run: |
-        wget https://github.com/lierdakil/stack2cabal-static-build/releases/download/v-s2c-1.0.13-hp-0.34.4/stack2cabal
-        chmod +x stack2cabal
-        mkdir -p ~/.local/bin
-        mv stack2cabal ~/.local/bin
-        ./scripts/validate-cabal-files.sh
+        wget https://github.com/lierdakil/hpack-static/releases/download/v0.34.4/hpack.gz
+        gunzip hpack.gz
+        chmod +x hpack
+
+    - name: Generate cabalfile
+      run: ./hpack -f
+
+    - run: git diff hsblst.cabal
+
+    - name: Fail if .cabal file was changed
+      run: git diff-files --quiet hsblst.cabal || exit 1
