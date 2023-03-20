@@ -17,8 +17,6 @@ copyright: 2022 Serokell <https://serokell.io>
 license-file: LICENSE
 license: MPL-2.0
 
-maintainer:
-- Nikolay "Lierdakil" Yakimov <nikolay.yakimov@serokell.io>
 tested-with:
   - GHC == 9.0.2
   - GHC == 9.2.7
