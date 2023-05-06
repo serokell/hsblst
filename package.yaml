@@ -20,7 +20,7 @@ license: MPL-2.0
 tested-with:
   - GHC == 9.0.2
   - GHC == 9.2.7
-  - GHC == 9.4.4
+  - GHC == 9.4.5
 
 default-extensions:
   - AllowAmbiguousTypes
