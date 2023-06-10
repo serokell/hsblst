@@ -67,10 +67,12 @@ import Crypto.BLST.Internal.Types
 -- | Generate a secret key from bytes.
 keygen :: (ByteArrayAccess ba, 32 <= n, KnownNat n) => SizedByteArray n ba -> SecretKey
 keygen = SecretKey . unsafePerformIO . B.keygen . unSizedByteArray
+{-# NOINLINE keygen #-}
 
 -- | Convert a secret key to the corresponding public key on a given curve.
 skToPk :: forall c. IsCurve c => SecretKey -> PublicKey c
 skToPk (SecretKey sk) = PublicKey $ unsafePerformIO $ skToPkPoint sk >>= toAffine
+{-# NOINLINE skToPk #-}
 
 -- | Serialize public key.
 serializePk
@@ -78,6 +80,7 @@ serializePk
   => PublicKey c
   -> SizedByteArray (SerializedSize (CurveToPkPoint c)) Bytes
 serializePk (PublicKey pk) = unsafePerformIO $ affSerialize pk
+{-# NOINLINE serializePk #-}
 
 -- | Deserialize public key.
 deserializePk
@@ -85,6 +88,7 @@ deserializePk
   => SizedByteArray (SerializedSize (CurveToPkPoint c)) ba
   -> Either B.BlstError (PublicKey c)
 deserializePk bs = unsafePerformIO $ fmap PublicKey <$> deserialize bs
+{-# NOINLINE deserializePk #-}
 
 -- | Compress public key.
 compressPk
@@ -92,6 +96,7 @@ compressPk
   => PublicKey c
   -> SizedByteArray (CompressedSize (CurveToPkPoint c)) Bytes
 compressPk (PublicKey pk) = unsafePerformIO $ affCompress pk
+{-# NOINLINE compressPk #-}
 
 -- | Decompress public key.
 decompressPk
@@ -99,6 +104,7 @@ decompressPk
   => SizedByteArray (CompressedSize (CurveToPkPoint c)) ba
   -> Either B.BlstError (PublicKey c)
 decompressPk bs = unsafePerformIO $ fmap PublicKey <$> uncompress bs
+{-# NOINLINE decompressPk #-}
 
 -- | Sign a single message.
 sign
@@ -110,6 +116,7 @@ sign
 sign (SecretKey sk) bytes dst = Signature $ unsafePerformIO $ do
   encMsg <- toCurve @m bytes dst
   signPk encMsg sk >>= toAffine
+{-# NOINLINE sign #-}
 
 -- | Serialize message signature.
 serializeSignature
@@ -117,6 +124,7 @@ serializeSignature
   => Signature c m
   -> SizedByteArray (SerializedSize (CurveToMsgPoint c)) Bytes
 serializeSignature (Signature sig) = unsafePerformIO $ affSerialize sig
+{-# NOINLINE serializeSignature #-}
 
 -- | Deserialize message signature.
 deserializeSignature
@@ -124,6 +132,7 @@ deserializeSignature
   => SizedByteArray (SerializedSize (CurveToMsgPoint c)) ba
   -> Either B.BlstError (Signature c m)
 deserializeSignature bs = unsafePerformIO $ fmap Signature <$> deserialize bs
+{-# NOINLINE deserializeSignature #-}
 
 -- | Serialize and compress message signature.
 compressSignature
@@ -131,6 +140,7 @@ compressSignature
   => Signature c m
   -> SizedByteArray (CompressedSize (CurveToMsgPoint c)) Bytes
 compressSignature (Signature sig) = unsafePerformIO $ affCompress sig
+{-# NOINLINE compressSignature #-}
 
 -- | Decompress and deserialize message signature.
 decompressSignature
@@ -138,6 +148,7 @@ decompressSignature
   => SizedByteArray (CompressedSize (CurveToMsgPoint c)) ba
   -> Either B.BlstError (Signature c m)
 decompressSignature bs = unsafePerformIO $ fmap Signature <$> uncompress bs
+{-# NOINLINE decompressSignature #-}
 
 -- | Verify message signature.
 verify
@@ -151,6 +162,7 @@ verify (Signature sig) (PublicKey pk) bytes dst =
   unsafePerformIO $ coreVerifyPk pk sig meth bytes dst
   where
     meth = demote @m
+{-# NOINLINE verify #-}
 
 -- | Convenience synonym for 'Nothing'. Do not use domain separation tag.
 noDST :: Maybe Bytes
@@ -159,10 +171,12 @@ noDST = Nothing
 -- | Serialize secret key.
 serializeSk :: SecretKey -> SizedByteArray B.SkSerializeSize ScrubbedBytes
 serializeSk (SecretKey sk) = unsafePerformIO $ B.lendianFromScalar sk
+{-# NOINLINE serializeSk #-}
 
 -- | Deserialize secret key.
 deserializeSk :: ByteArrayAccess ba => SizedByteArray B.SkSerializeSize ba -> SecretKey
 deserializeSk bs = SecretKey $ unsafePerformIO $ B.scalarFromLendian bs
+{-# NOINLINE deserializeSk #-}
 
 -- | Aggregate multiple signatures.
 aggregateSignatures :: forall c m. IsCurve c => NonEmpty (Signature c m) -> Signature c m
@@ -171,6 +185,7 @@ aggregateSignatures (Signature x :| xs) = Signature . unsafePerformIO $ do
   foldlM add start xs >>= toAffine
   where
     add x' (Signature y) = addOrDoubleAffine x' y
+{-# NOINLINE aggregateSignatures #-}
 
 -- | Aggregate signature verification.
 aggregateVerify
@@ -191,3 +206,4 @@ aggregateVerify ((PublicKey pk1, msg1) :| xs) (Signature sig) dst = unsafePerfor
     checkThrow = \case
       B.BlstSuccess -> pure ()
       x -> throwIO x
+{-# NOINLINE aggregateVerify #-}

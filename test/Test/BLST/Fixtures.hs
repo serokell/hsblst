@@ -51,6 +51,7 @@ msg = "hello, world!"
 
 expectedKey :: B.Scalar
 expectedKey = unsafePerformIO $ B.scalarFromLendian $ fromHex expectedSerKey
+{-# NOINLINE expectedKey #-}
 
 expectedSerKey :: Text
 expectedSerKey =
@@ -155,6 +156,7 @@ expectedSignHash1 = deserializePoint
 
 expectedAffSignHash1 :: B.Affine 'B.P2
 expectedAffSignHash1 = unsafePerformIO $ B.p2ToAffine expectedSignHash1
+{-# NOINLINE expectedAffSignHash1 #-}
 
 expectedSignHash2 :: B.Point 'B.P1
 expectedSignHash2 = deserializePoint
@@ -167,6 +169,7 @@ expectedSignHash2 = deserializePoint
 
 expectedAffSignHash2 :: B.Affine 'B.P1
 expectedAffSignHash2 = unsafePerformIO $ B.p1ToAffine expectedSignHash2
+{-# NOINLINE expectedAffSignHash2 #-}
 
 expectedSignEnc1 :: B.Point 'B.P2
 expectedSignEnc1 = deserializePoint
@@ -185,6 +188,7 @@ expectedSignEnc1 = deserializePoint
 
 expectedAffSignEnc1 :: B.Affine 'B.P2
 expectedAffSignEnc1 = unsafePerformIO $ B.p2ToAffine expectedSignEnc1
+{-# NOINLINE expectedAffSignEnc1 #-}
 
 expectedSignEnc2 :: B.Point 'B.P1
 expectedSignEnc2 = deserializePoint
@@ -197,6 +201,7 @@ expectedSignEnc2 = deserializePoint
 
 expectedAffSignEnc2 :: B.Affine 'B.P1
 expectedAffSignEnc2 = unsafePerformIO $ B.p1ToAffine expectedSignEnc2
+{-# NOINLINE expectedAffSignEnc2 #-}
 
 expectedAffPk1 :: B.Affine 'B.P1
 expectedAffPk1 = deserializeAffine' expectedSer1

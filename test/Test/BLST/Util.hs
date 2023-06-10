@@ -40,12 +40,15 @@ toHex = encodeHex . BA.convert . AS.unSizedByteArray
 
 deserializePoint :: C.IsPoint p => Text -> B.Point p
 deserializePoint = unsafePerformIO . C.fromAffine . deserializeAffine
+{-# NOINLINE deserializePoint #-}
 
 deserializePoint' :: C.IsPoint p => SizedByteArray (C.SerializedSize p) Bytes -> B.Point p
 deserializePoint' = unsafePerformIO . C.fromAffine . deserializeAffine'
+{-# NOINLINE deserializePoint' #-}
 
 deserializeAffine :: C.IsPoint p => Text -> B.Affine p
 deserializeAffine = deserializeAffine' . fromHex
 
 deserializeAffine' :: C.IsPoint p => SizedByteArray (C.SerializedSize p) Bytes -> B.Affine p
 deserializeAffine' = unsafePerformIO . fmap (either (error . show) id) . C.deserialize
+{-# NOINLINE deserializeAffine' #-}
