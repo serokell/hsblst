@@ -19,8 +19,8 @@ license: MPL-2.0
 
 tested-with:
   - GHC == 9.0.2
-  - GHC == 9.2.8
   - GHC == 9.4.5
+  - GHC == 9.6.2
 
 default-extensions:
   - AllowAmbiguousTypes
@@ -103,7 +103,7 @@ extra-source-files:
 - c-source/README.md
 
 dependencies:
-  - base >=4.15.1.0 && <4.18
+  - base >=4.15.1.0 && <4.19
   - memory >=0.16.0 && <0.19
 
 library:
