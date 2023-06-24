@@ -199,8 +199,11 @@ jobs:
         stack config set system-ghc --global true
         stack config set install-ghc --global false
         stack config set resolver ${{ matrix.resolver }}
-        # for weeder
-        echo 'ghc-options: {"$locals": -ddump-to-file -ddump-hi}' >> stack.yaml
+
+    - name: Configure for Weeder
+      if: ${{ steps.ghcver.outputs.ghcver == '9.4.5' }}
+      run: |
+        echo 'ghc-options: { "$locals": -fwrite-ide-info }' >> stack.yaml
 
     - name: Stack build
       run: |
@@ -208,6 +211,14 @@ jobs:
           --test --bench --no-run-tests --no-run-benchmarks \
           --ghc-options '-Werror' \
           --haddock --no-haddock-deps
+
+    - name: Weeder
+      if: ${{ steps.ghcver.outputs.ghcver == '9.4.5' }}
+      run: |
+        wget https://github.com/lierdakil/weeder2-static/releases/download/v2.5.0-1/weeder.gz
+        gunzip weeder.gz
+        chmod +x weeder
+        ./weeder
 
     - name: Stack test
       run: |
