@@ -18,7 +18,7 @@ license-file: LICENSE
 license: MPL-2.0
 
 tested-with:
-  - GHC == 9.4.6
+  - GHC == 9.4.7
   - GHC == 9.6.2
 
 default-extensions:
