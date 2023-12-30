@@ -103,7 +103,7 @@ extra-source-files:
 - c-source/README.md
 
 dependencies:
-  - base >=4.15.1.0 && <4.20
+  - base >=4.17 && <4.20
   - memory >=0.16.0 && <0.19
 
 library:
