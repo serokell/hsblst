@@ -275,9 +275,8 @@ test-suite hsblst-test
   build-tool-depends:
       tasty-discover:tasty-discover
   build-depends:
-      base >=4.15.1.0 && <4.19
+    , base16-bytestring ==1.0.*
     , bytestring >=0.10.12.1 && <0.12
-    , hex-text >=0.1.0.6 && <0.2
     , hsblst
     , memory >=0.16.0 && <0.19
     , tasty >=1.4.2.1 && <1.5
