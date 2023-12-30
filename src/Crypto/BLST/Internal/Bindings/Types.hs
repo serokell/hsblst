@@ -2,6 +2,7 @@
 -- SPDX-License-Identifier: MPL-2.0
 
 {-# OPTIONS_HADDOCK not-home #-}
+{-# LANGUAGE RoleAnnotations #-}
 
 -- | Types for lower-level bindings
 module Crypto.BLST.Internal.Bindings.Types
@@ -29,6 +30,7 @@ instance Demote 'P2 where demote = P2
 type SizeOf :: Type -> Nat
 type family SizeOf t
 
+type role Point nominal
 -- | Point representation.
 newtype Point (a :: PointKind) = Point ( SizedByteArray (SizeOf (Point a)) Bytes )
   deriving stock (Show, Eq)
@@ -36,6 +38,7 @@ newtype Point (a :: PointKind) = Point ( SizedByteArray (SizeOf (Point a)) Bytes
 instance NFData (Point a) where
   rnf = rnf @Bytes . unSizedByteArray . coerce
 
+type role Affine nominal
 -- | Affine point representation.
 newtype Affine (a :: PointKind) = Affine { unAffine :: SizedByteArray (SizeOf (Affine a)) Bytes }
   deriving stock (Show, Eq)
