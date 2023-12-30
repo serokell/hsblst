@@ -161,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stack: ["2.9.3"]
+        stack: ["2.13.1"]
         # Remember to update the `tested-with` section of `package.yaml`.
         resolver: ["lts", "nightly"]
 
