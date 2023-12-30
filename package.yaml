@@ -17,6 +17,9 @@ copyright: 2022 Serokell <https://serokell.io>
 license-file: LICENSE
 license: MPL-2.0
 
+verbatim:
+  cabal-version: 3.0
+
 tested-with:
   - GHC == 9.4.8
   - GHC == 9.6.3
@@ -109,12 +112,13 @@ dependencies:
 library:
   source-dirs: src
   include-dirs: c-source/bindings
-  build-tools: c2hs:c2hs
   dependencies:
     - deepseq >=1.4.5.0 && < 1.5.1
   c-sources:
     - c-source/src/server.c
-    - c-source/build/assembly.S
+  verbatim:
+    build-tool-depends: c2hs:c2hs
+    asm-sources: c-source/build/assembly.S
 
 tests:
   hsblst-test:
@@ -134,8 +138,8 @@ tests:
 
     dependencies:
     - hsblst
-    - bytestring >=0.10.12.1 && <0.12
+    - bytestring >=0.10.12.1 && <0.13
     - base16-bytestring ^>=1.0
-    - tasty ^>=1.4.2.1
+    - tasty >=1.4.2.1 && <1.6
     - tasty-hunit ^>=0.10.0.3
     - text ^>=1.2.5.0 || ^>=2.0.1 || ^>= 2.1
