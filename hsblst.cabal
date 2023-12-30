@@ -149,6 +149,8 @@ library
       Crypto.BLST.Internal.Types
   other-modules:
       Paths_hsblst
+  autogen-modules:
+      Paths_hsblst
   hs-source-dirs:
       src
   default-extensions:
@@ -223,6 +225,8 @@ test-suite hsblst-test
       Test.BLST.Fixtures
       Test.BLST.Tezos
       Test.BLST.Util
+      Paths_hsblst
+  autogen-modules:
       Paths_hsblst
   hs-source-dirs:
       test

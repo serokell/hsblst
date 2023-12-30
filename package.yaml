@@ -116,6 +116,8 @@ library:
     - deepseq >=1.4.5.0 && < 1.5.1
   c-sources:
     - c-source/src/server.c
+  generated-other-modules:
+    - Paths_hsblst
   verbatim:
     build-tool-depends: c2hs:c2hs
     asm-sources: c-source/build/assembly.S
@@ -125,6 +127,8 @@ tests:
     main:        Main.hs
     source-dirs: test
     build-tools: tasty-discover:tasty-discover
+    generated-other-modules:
+      - Paths_hsblst
 
     ghc-options:
     - -Wno-incomplete-patterns
