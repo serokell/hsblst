@@ -20,6 +20,7 @@ build-type:     Simple
 tested-with:
     GHC == 9.4.8
   , GHC == 9.6.3
+  , GHC == 9.8.1
 extra-source-files:
     README.md
     CHANGELOG.md
