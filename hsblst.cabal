@@ -22,8 +22,6 @@ tested-with:
   , GHC == 9.6.3
   , GHC == 9.8.1
 extra-source-files:
-    README.md
-    CHANGELOG.md
     c-source/build/coff/add_mod_256-x86_64.s
     c-source/build/coff/add_mod_384-x86_64.s
     c-source/build/coff/add_mod_384x384-x86_64.s
@@ -132,6 +130,9 @@ extra-source-files:
     c-source/src/vect.h
     c-source/bindings/blst.h
     c-source/bindings/blst_aux.h
+extra-doc-files:
+    README.md
+    CHANGELOG.md
     c-source/LICENSE
     c-source/README.md
 

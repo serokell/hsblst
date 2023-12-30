@@ -94,16 +94,18 @@ when:
     ghc-options:
       - -Wno-missing-kind-signatures
 
-extra-source-files:
+extra-doc-files:
 - README.md
 - CHANGELOG.md
+- c-source/LICENSE
+- c-source/README.md
+
+extra-source-files:
 - c-source/build/**/*.s
 - c-source/build/**/*.S
 - c-source/src/**/*.c
 - c-source/src/**/*.h
 - c-source/bindings/*.h
-- c-source/LICENSE
-- c-source/README.md
 
 dependencies:
   - base >=4.17 && <4.20
