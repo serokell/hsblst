@@ -8,7 +8,7 @@
 
 HsBLST is low-level Haskell bindings and a high-level interface to [BLST](https://github.com/supranational/blst) -- a multilingual BLS12-381 signature library.
 
-This package includes sources from v0.3.10 version of BLST, licensed under
+This package includes sources from v0.3.11 version of BLST, licensed under
 [Apache License 2.0](https://github.com/supranational/blst/blob/master/LICENSE)
 
 ## Build Instructions [↑](#hsblst)
