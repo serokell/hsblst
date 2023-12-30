@@ -204,8 +204,8 @@ library
   build-tools:
       c2hs
   build-depends:
-      base >=4.15.1.0 && <4.19
-    , deepseq >=1.4.5.0 && <1.5
+      base >=4.15.1.0 && <4.20
+    , deepseq >=1.4.5.0 && <1.5.1
     , memory >=0.16.0 && <0.19
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
@@ -275,13 +275,14 @@ test-suite hsblst-test
   build-tool-depends:
       tasty-discover:tasty-discover
   build-depends:
+      base >=4.15.1.0 && <4.20
     , base16-bytestring ==1.0.*
     , bytestring >=0.10.12.1 && <0.12
     , hsblst
     , memory >=0.16.0 && <0.19
     , tasty >=1.4.2.1 && <1.5
     , tasty-hunit >=0.10.0.3 && <0.11
-    , text >=1.2.5.0 && <1.3 || >=2.0.1 && <2.1
+    , text >=1.2.5.0 && <1.3 || >=2.0.1 && <2.1 || >=2.1 && <2.2
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
   if impl(ghc < 9.4)

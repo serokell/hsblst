@@ -102,7 +102,7 @@ extra-source-files:
 - c-source/README.md
 
 dependencies:
-  - base >=4.15.1.0 && <4.19
+  - base >=4.15.1.0 && <4.20
   - memory >=0.16.0 && <0.19
 
 library:
@@ -110,7 +110,7 @@ library:
   include-dirs: c-source/bindings
   build-tools: c2hs:c2hs
   dependencies:
-    - deepseq ^>=1.4.5.0
+    - deepseq >=1.4.5.0 && < 1.5.1
   c-sources:
     - c-source/src/server.c
     - c-source/build/assembly.S
@@ -137,4 +137,4 @@ tests:
     - base16-bytestring ^>=1.0
     - tasty ^>=1.4.2.1
     - tasty-hunit ^>=0.10.0.3
-    - text ^>=1.2.5.0 || ^>=2.0.1
+    - text ^>=1.2.5.0 || ^>=2.0.1 || ^>= 2.1
