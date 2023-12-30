@@ -1,11 +1,11 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 
 name:           hsblst
-version:        0.0.2
+version:        0.0.3
 synopsis:       Haskell bindings to BLST
 description:    HsBLST is low-level Haskell bindings and a high-level interface to [BLST](https://github.com/supranational/blst) -- a multilingual BLS12-381 signature library.
 category:       Cryptography
@@ -20,6 +20,7 @@ build-type:     Simple
 tested-with:
     GHC == 9.4.8
   , GHC == 9.6.3
+  , GHC == 9.8.1
 extra-source-files:
     README.md
     CHANGELOG.md
@@ -98,6 +99,7 @@ extra-source-files:
     c-source/src/client_min_pk.c
     c-source/src/client_min_sig.c
     c-source/src/consts.c
+    c-source/src/cpuid.c
     c-source/src/e1.c
     c-source/src/e2.c
     c-source/src/exp.c
@@ -109,6 +111,7 @@ extra-source-files:
     c-source/src/map_to_g2.c
     c-source/src/multi_scalar.c
     c-source/src/pairing.c
+    c-source/src/pentaroot.c
     c-source/src/rb_tree.c
     c-source/src/recip.c
     c-source/src/server.c
@@ -121,6 +124,7 @@ extra-source-files:
     c-source/src/errors.h
     c-source/src/fields.h
     c-source/src/no_asm.h
+    c-source/src/pentaroot-addchain.h
     c-source/src/point.h
     c-source/src/recip-addchain.h
     c-source/src/sha256.h
@@ -200,16 +204,15 @@ library
       c-source/bindings
   c-sources:
       c-source/src/server.c
-      c-source/build/assembly.S
-  build-tools:
-      c2hs
   build-depends:
-      base >=4.15.1.0 && <4.19
-    , deepseq >=1.4.5.0 && <1.5
+      base >=4.17 && <4.20
+    , deepseq >=1.4.5.0 && <1.5.1
     , memory >=0.16.0 && <0.19
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
   default-language: Haskell2010
+  asm-sources: c-source/build/assembly.S
+  build-tool-depends: c2hs:c2hs
 
 test-suite hsblst-test
   type: exitcode-stdio-1.0
@@ -275,14 +278,14 @@ test-suite hsblst-test
   build-tool-depends:
       tasty-discover:tasty-discover
   build-depends:
-      base >=4.15.1.0 && <4.19
-    , bytestring >=0.10.12.1 && <0.12
-    , hex-text >=0.1.0.6 && <0.2
+      base >=4.17 && <4.20
+    , base16-bytestring ==1.0.*
+    , bytestring >=0.10.12.1 && <0.13
     , hsblst
     , memory >=0.16.0 && <0.19
-    , tasty >=1.4.2.1 && <1.5
+    , tasty >=1.4.2.1 && <1.6
     , tasty-hunit >=0.10.0.3 && <0.11
-    , text >=1.2.5.0 && <1.3 || >=2.0.1 && <2.1
+    , text >=1.2.5.0 && <1.3 || >=2.0.1 && <2.1 || >=2.1 && <2.2
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
   if impl(ghc < 9.4)

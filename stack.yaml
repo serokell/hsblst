@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Serokell <https://serokell.io>
 # SPDX-License-Identifier: CC0-1.0
 
-resolver: lts-21.22
+resolver: lts-22.4
 packages: ['.']

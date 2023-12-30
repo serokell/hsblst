@@ -4,6 +4,7 @@
 #include <blst.h>
 
 {-# OPTIONS_HADDOCK not-home #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Lower-level bindings. Functions starting with @blst_@ are raw c2hs
 -- bindings. Others are slightly higher level wrappers around those bindings.

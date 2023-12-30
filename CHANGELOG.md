@@ -3,6 +3,12 @@
    - SPDX-License-Identifier: MPL-2.0
    -->
 
+## v0.0.3
+
+* Minor tweaks for GHC 9.8 compatibility.
+* Types `Point` and `Affine` now have `PointKind` parameter be role `nominal`, as coercing those between point types will break invariants.
+* Bundled blst version bumped to v0.3.11.
+
 ## v0.0.2
 
 * Prevent inlining of foreign calls. This fixes a potential efficiency issue,

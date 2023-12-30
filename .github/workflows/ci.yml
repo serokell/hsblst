@@ -161,9 +161,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stack: ["2.9.3"]
+        stack: ["2.13.1"]
         # Remember to update the `tested-with` section of `package.yaml`.
-        resolver: ["lts", "nightly"]
+        resolver: ["lts-21", "lts", "nightly"]
 
     steps:
     - name: Get compiler version
@@ -189,9 +189,11 @@ jobs:
         stack-version: ${{ matrix.stack }}
 
     - uses: actions/cache@v3
-      name: Cache ~/.stack
+      name: Cache ~/.stack and cabal store
       with:
-        path: ~/.stack
+        path: |
+          ~/.stack
+          ${{ steps.setup-haskell.outputs.cabal-store }}
         key: ${{ runner.os }}-${{ steps.ghcver.outputs.ghcver }}-stack
 
     - name: Set stack config
@@ -201,7 +203,6 @@ jobs:
         stack config set resolver ${{ matrix.resolver }}
 
     - name: Configure for Weeder
-      if: ${{ steps.ghcver.outputs.ghcver == '9.4.5' }}
       run: |
         echo 'ghc-options: { "$locals": -fwrite-ide-info }' >> stack.yaml
 
@@ -212,12 +213,10 @@ jobs:
           --ghc-options '-Werror' \
           --haddock --no-haddock-deps
 
-    - name: Weeder
-      if: ${{ steps.ghcver.outputs.ghcver == '9.4.5' }}
+    - name: Weeder for GHC 9.6
+      if: ${{ startsWith(steps.ghcver.outputs.ghcver, '9.6') }}
       run: |
-        wget https://github.com/lierdakil/weeder2-static/releases/download/v2.5.0-1/weeder.gz
-        gunzip weeder.gz
-        chmod +x weeder
+        cabal install --installdir "$PWD" weeder
         ./weeder
 
     - name: Stack test

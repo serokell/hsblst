@@ -2,6 +2,7 @@
 -- SPDX-License-Identifier: MPL-2.0
 
 {-# OPTIONS_HADDOCK not-home #-}
+{-# LANGUAGE RoleAnnotations #-}
 
 -- | Types used for the high-level interface.
 module Crypto.BLST.Internal.Types
@@ -35,6 +36,7 @@ newtype SecretKey = SecretKey Scalar
 
 type instance ByteSize 'Serialize SecretKey = SkSerializeSize
 
+type role PublicKey nominal
 -- | Public key representation.
 type PublicKey :: Curve -> Type
 newtype PublicKey c = PublicKey (Affine (CurveToPkPoint c))
@@ -44,6 +46,7 @@ newtype PublicKey c = PublicKey (Affine (CurveToPkPoint c))
 type instance ByteSize 'Serialize (PublicKey c) = SerializedSize (CurveToPkPoint c)
 type instance ByteSize 'Compress (PublicKey c) = CompressedSize (CurveToPkPoint c)
 
+type role Signature nominal phantom
 -- | Signature representation.
 type Signature :: Curve -> EncodeMethod -> Type
 newtype Signature c m = Signature (Affine (CurveToMsgPoint c))
