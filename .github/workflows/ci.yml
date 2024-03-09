@@ -43,10 +43,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: haskell/actions/hlint-setup@v2
+      - uses: haskell-actions/hlint-setup@v2
         with:
           version: '3.5'
-      - uses: haskell/actions/hlint-run@v2
+      - uses: haskell-actions/hlint-run@v2
         with:
           path: '["src/", "test/"]'
           fail-on: warning
@@ -101,7 +101,7 @@ jobs:
       with:
         submodules: 'true'
 
-    - uses: haskell/actions/setup@v2
+    - uses: haskell-actions/setup@v2
       id: setup-haskell-cabal
       name: Setup Haskell
       with:
@@ -181,7 +181,7 @@ jobs:
         export GHCVER=${{ steps.ghcver.outputs.ghcver }}
         yq -e '."tested-with" | contains(["GHC == " + strenv(GHCVER)])' package.yaml
 
-    - uses: haskell/actions/setup@v2
+    - uses: haskell-actions/setup@v2
       name: Setup Haskell Stack
       id: setup-haskell
       with:
@@ -200,7 +200,10 @@ jobs:
       run: |
         stack config set system-ghc --global true
         stack config set install-ghc --global false
-        stack config set resolver ${{ matrix.resolver }}
+        # this is a dirty hack because using short resolver name gets an old
+        # resolver for some reason
+        RESOLVER=$(curl -w '%{redirect_url}' https://www.stackage.org/${{ matrix.resolver }} | sed 's!.*/!!')
+        stack config set resolver $RESOLVER
 
     - name: Configure for Weeder
       run: |
