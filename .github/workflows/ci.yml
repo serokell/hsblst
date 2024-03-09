@@ -200,7 +200,10 @@ jobs:
       run: |
         stack config set system-ghc --global true
         stack config set install-ghc --global false
-        stack config set resolver ${{ matrix.resolver }}
+        # this is a dirty hack because using short resolver name gets an old
+        # resolver for some reason
+        RESOLVER=$(curl -w '%{redirect_url}' https://www.stackage.org/${{ matrix.resolver }} | sed 's!.*/!!')
+        stack config set resolver $RESOLVER
 
     - name: Configure for Weeder
       run: |
