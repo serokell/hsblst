@@ -20,7 +20,7 @@ build-type:     Simple
 tested-with:
     GHC == 9.4.8
   , GHC == 9.6.4
-  , GHC == 9.8.1
+  , GHC == 9.8.2
 extra-source-files:
     c-source/build/coff/add_mod_256-x86_64.s
     c-source/build/coff/add_mod_384-x86_64.s
