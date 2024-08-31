@@ -161,9 +161,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stack: ["2.13.1"]
+        stack: ["latest"]
         # Remember to update the `tested-with` section of `package.yaml`.
-        resolver: ["lts-21", "lts", "nightly"]
+        resolver: ["lts", "nightly"]
 
     steps:
     - name: Get compiler version
@@ -220,7 +220,7 @@ jobs:
       if: ${{ startsWith(steps.ghcver.outputs.ghcver, '9.6') }}
       run: |
         cabal install --installdir "$PWD" weeder
-        ./weeder
+        ./weeder --hie-directory ./.stack-work/dist/
 
     - name: Stack test
       run: |
