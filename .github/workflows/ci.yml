@@ -163,7 +163,7 @@ jobs:
       matrix:
         stack: ["2.13.1"]
         # Remember to update the `tested-with` section of `package.yaml`.
-        resolver: ["lts-21", "lts", "nightly"]
+        resolver: ["lts", "nightly"]
 
     steps:
     - name: Get compiler version
