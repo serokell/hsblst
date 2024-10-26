@@ -19,7 +19,7 @@ license-file:   LICENSE
 build-type:     Simple
 tested-with:
     GHC == 9.6.6
-  , GHC == 9.8.2
+  , GHC == 9.8.3
 extra-source-files:
     c-source/build/coff/add_mod_256-x86_64.s
     c-source/build/coff/add_mod_384-x86_64.s
