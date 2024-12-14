@@ -18,8 +18,8 @@ license:        MPL-2.0
 license-file:   LICENSE
 build-type:     Simple
 tested-with:
-    GHC == 9.6.6
-  , GHC == 9.8.3
+    GHC == 9.8.4
+  , GHC == 9.10.1
 extra-source-files:
     c-source/build/coff/add_mod_256-x86_64.s
     c-source/build/coff/add_mod_384-x86_64.s
@@ -207,8 +207,8 @@ library
   c-sources:
       c-source/src/server.c
   build-depends:
-      base >=4.17 && <4.20
-    , deepseq >=1.4.5.0 && <1.5.1
+      base >=4.17 && <4.21
+    , deepseq >=1.4.5.0 && <1.6.0
     , memory >=0.16.0 && <0.19
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
@@ -282,7 +282,7 @@ test-suite hsblst-test
   build-tool-depends:
       tasty-discover:tasty-discover
   build-depends:
-      base >=4.17 && <4.20
+      base >=4.17 && <4.21
     , base16-bytestring ==1.0.*
     , bytestring >=0.10.12.1 && <0.13
     , hsblst

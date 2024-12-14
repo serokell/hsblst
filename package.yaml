@@ -21,8 +21,8 @@ verbatim:
   cabal-version: 3.0
 
 tested-with:
-  - GHC == 9.6.6
-  - GHC == 9.8.3
+  - GHC == 9.8.4
+  - GHC == 9.10.1
 
 default-extensions:
   - AllowAmbiguousTypes
@@ -107,14 +107,14 @@ extra-source-files:
 - c-source/bindings/*.h
 
 dependencies:
-  - base >=4.17 && <4.20
+  - base >=4.17 && <4.21
   - memory >=0.16.0 && <0.19
 
 library:
   source-dirs: src
   include-dirs: c-source/bindings
   dependencies:
-    - deepseq >=1.4.5.0 && < 1.5.1
+    - deepseq >=1.4.5.0 && < 1.6.0
   c-sources:
     - c-source/src/server.c
   generated-other-modules:
