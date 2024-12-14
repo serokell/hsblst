@@ -216,8 +216,8 @@ jobs:
           --ghc-options '-Werror' \
           --haddock --no-haddock-deps
 
-    - name: Weeder for GHC 9.6
-      if: ${{ startsWith(steps.ghcver.outputs.ghcver, '9.6') }}
+    - name: Weeder for GHC 9.8
+      if: ${{ startsWith(steps.ghcver.outputs.ghcver, '9.8') }}
       run: |
         cabal install --installdir "$PWD" weeder
         ./weeder --hie-directory ./.stack-work/dist/
