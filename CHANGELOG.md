@@ -3,6 +3,10 @@
    - SPDX-License-Identifier: MPL-2.0
    -->
 
+## v0.0.4
+
+* Bundled blst version bumped to v0.3.13
+
 ## v0.0.3
 
 * Minor tweaks for GHC 9.8 compatibility.
