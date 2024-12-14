@@ -5,7 +5,7 @@ cabal-version: 3.0
 -- see: https://github.com/sol/hpack
 
 name:           hsblst
-version:        0.0.3
+version:        0.0.4
 synopsis:       Haskell bindings to BLST
 description:    HsBLST is low-level Haskell bindings and a high-level interface to [BLST](https://github.com/supranational/blst) -- a multilingual BLS12-381 signature library.
 category:       Cryptography
@@ -64,6 +64,15 @@ extra-source-files:
     c-source/build/mach-o/sha256-portable-x86_64.s
     c-source/build/mach-o/sha256-x86_64.s
     c-source/build/assembly.S
+    c-source/build/cheri/add_mod_256-armv8.S
+    c-source/build/cheri/add_mod_384-armv8.S
+    c-source/build/cheri/ct_inverse_mod_256-armv8.S
+    c-source/build/cheri/ct_inverse_mod_384-armv8.S
+    c-source/build/cheri/ct_is_square_mod_384-armv8.S
+    c-source/build/cheri/div3w-armv8.S
+    c-source/build/cheri/mul_mont_256-armv8.S
+    c-source/build/cheri/mul_mont_384-armv8.S
+    c-source/build/cheri/sha256-armv8.S
     c-source/build/coff/add_mod_256-armv8.S
     c-source/build/coff/add_mod_384-armv8.S
     c-source/build/coff/ct_inverse_mod_256-armv8.S
