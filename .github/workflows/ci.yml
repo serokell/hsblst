@@ -245,12 +245,12 @@ jobs:
 
     - name: Get hpack
       run: |
-        wget https://github.com/lierdakil/hpack-static/releases/download/v0.34.4/hpack.gz
-        gunzip hpack.gz
-        chmod +x hpack
+        wget https://github.com/sol/hpack/releases/download/0.37.0/hpack_linux.gz
+        gunzip hpack_linux.gz
+        chmod +x hpack_linux
 
     - name: Generate cabalfile
-      run: ./hpack -f
+      run: ./hpack_linux -f
 
     - run: git diff hsblst.cabal
 
