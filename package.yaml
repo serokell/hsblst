@@ -43,6 +43,7 @@ default-extensions:
   - EmptyCase
   - FlexibleContexts
   - FlexibleInstances
+  - ForeignFunctionInterface
   - GADTs
   - GeneralizedNewtypeDeriving
   - ImportQualifiedPost
@@ -109,7 +110,7 @@ extra-source-files:
 
 dependencies:
   - base >=4.17 && <4.22
-  - memory >=0.16.0 && <0.19
+  - ram >=0.19 && < 0.22
 
 library:
   source-dirs: src

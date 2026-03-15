@@ -3,3 +3,5 @@
 
 resolver: lts-23.0
 packages: ['.']
+extra-deps:
+- ram-0.21.1@sha256:f8336299aa461ab9af291eeb36828ef40e58ca062e2ad0659ba733908137ff07,2814
