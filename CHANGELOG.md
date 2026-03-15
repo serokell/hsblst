@@ -3,6 +3,10 @@
    - SPDX-License-Identifier: MPL-2.0
    -->
 
+## v0.0.5
+
+* Moved to ram instead of memory
+* Added ForeignFunctionInterface to extensions for cabal to build successfully
 ## v0.0.4
 
 * Bundled blst version bumped to v0.3.13
