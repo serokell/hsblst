@@ -7,6 +7,7 @@
 
 * Moved to ram instead of memory
 * Added ForeignFunctionInterface to extensions for cabal to build successfully
+* Bundled blst version bumped to v0.3.16
 
 ## v0.0.4
 
