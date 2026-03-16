@@ -11,6 +11,10 @@ HsBLST is low-level Haskell bindings and a high-level interface to [BLST](https:
 This package includes sources from v0.3.13 version of BLST, licensed under
 [Apache License 2.0](https://github.com/supranational/blst/blob/master/LICENSE)
 
+## Known Issues
+
+- Fails to build on Windows with GHC 9.12.3, seems to be a GHC bug.
+
 ## Build Instructions [↑](#hsblst)
 
 Run `make` to build everything.
