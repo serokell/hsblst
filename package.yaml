@@ -117,7 +117,7 @@ library:
   source-dirs: src
   include-dirs: c-source/bindings
   dependencies:
-    - deepseq >=1.4.5.0 && < 1.6.0
+    - deepseq >=1.4.5 && < 1.6
   c-sources:
     - c-source/src/server.c
   generated-other-modules:
@@ -147,7 +147,7 @@ tests:
     dependencies:
     - hsblst
     - bytestring >=0.10.12.1 && <0.13
-    - base16-bytestring ^>=1.0
+    - base16-bytestring ^>=1
     - tasty >=1.4.2.1 && <1.6
     - tasty-hunit ^>=0.10.0.3
-    - text ^>=1.2.5.0 || ^>=2.0.1 || ^>= 2.1
+    - text ^>=1.2.5 || ^>=2.0.1 || ^>= 2.1
